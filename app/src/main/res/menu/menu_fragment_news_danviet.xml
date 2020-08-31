@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/tin_tuc"
+        android:title="Tin tức"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/the_gioi"
+        android:title="Thế giới"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/nha_nong"
+        android:title="Nhà nông"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/the_thao"
+        android:title="Thể thao"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/phap_luat"
+        android:title="Pháp luật"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/kinh_te"
+        android:title="Kinh tế"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/van_hoa"
+        android:title="Văn hóa"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/du_lich"
+        android:title="Du lịch"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/gia_dinh"
+        android:title="Gia đình"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/cong_nghe"
+        android:title="Công nghệ"
+        app:showAsAction="never"/>
+</menu>

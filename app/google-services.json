@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "562771450907",
+    "firebase_url": "https://online-newspapers-380f1.firebaseio.com",
+    "project_id": "online-newspapers-380f1",
+    "storage_bucket": "online-newspapers-380f1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:562771450907:android:cd25648e616ae270d22cbe",
+        "android_client_info": {
+          "package_name": "com.hoangnguyen.onlinenewspapers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "562771450907-j180j8rk8q5cad9ggdag9rpal553a4m0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiGxp2FNyApc-H24AcsZ-K_-7UIeagi7U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "562771450907-j180j8rk8q5cad9ggdag9rpal553a4m0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
