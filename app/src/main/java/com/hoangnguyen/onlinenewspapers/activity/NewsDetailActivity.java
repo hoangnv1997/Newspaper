@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,10 +14,12 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,18 +48,19 @@ public class NewsDetailActivity extends AppCompatActivity {
     private ShareLinkContent mShareLinkContent;
     private FirebaseDatabase mDatabase;
     private DatabaseReference mReferenceNews;
-    private String mUrl, mTitle, mUrlToImage, mPubDate, mSource, mAuthor, mDescription;
+    private String mUrl, mTitle, mUrlToImage, mPubDate, mSource, mAuthor, mDescription, mTime;
     private WebView mWebView;
     private Boolean mIsAddNews;
     private String mKey;
+    private ProgressBar mProgressBar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
-
         init();
+        //mWebView.setVisibility(View.INVISIBLE);
         getDataFromFragment();
     }
 
@@ -69,31 +73,53 @@ public class NewsDetailActivity extends AppCompatActivity {
         mSource = mIntent.getStringExtra("Source");
         mAuthor = mIntent.getStringExtra("Author");
         mDescription = mIntent.getStringExtra("Description");
-        RequestOptions requestOptions = new RequestOptions();
-        requestOptions.error(Utils.getRandomDrawbleColor());
-
-        Glide.with(this)
-                .load(mUrlToImage)
-                .apply(requestOptions)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(mImageView);
-        mTvAppBarTitle.setText(LinkRSS.VIETNAMNET_LINK);
+        mTime = mIntent.getStringExtra("Time");
+//        RequestOptions requestOptions = new RequestOptions();
+//        requestOptions.error(Utils.getRandomDrawbleColor());
+//
+//        Glide.with(this)
+//                .load(mUrlToImage)
+//                .apply(requestOptions)
+//                .transition(DrawableTransitionOptions.withCrossFade())
+//                .into(mImageView);
+        mTvAppBarTitle.setText(mSource);
         mTvAppBarSubTitle.setText(mUrl);
-        mTvTitle.setText(mTitle);
-        mTvTime.setText(LinkRSS.VIETNAMNET_SOURCE + " \u2022 " + Utils.DateToTimeFormat(mPubDate));
-        mTvDate.setText(Utils.DateFormat(mPubDate));
+//        mTvTitle.setText(mTitle);
+        // mTvTime.setText(LinkRSS.VIETNAMNET_SOURCE + " \u2022 " + Utils.DateToTimeFormat(mPubDate));
+        // mTvDate.setText(Utils.DateFormat(mPubDate));
         initWebView(mUrl);
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private void initWebView(String url) {
-        mWebView = findViewById(R.id.webView);
+    private void initWebView(final String url) {
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setLoadsImagesAutomatically(true);
         mWebView.getSettings().setSupportZoom(true);
         mWebView.getSettings().setBuiltInZoomControls(true);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        mWebView.setWebViewClient(new MyBrowser());
+        mWebView.setWebViewClient(new WebViewClient() {
+//            @Override
+//            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+//                super.onPageStarted(view, url, favicon);
+//                mWebView.setVisibility(View.GONE);
+//                mProgressBar.setVisibility(View.VISIBLE);
+//                 //Toast.makeText(NewsDetailActivity.this, "onPageStarted", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onPageFinished(WebView view, String url) {
+//                super.onPageFinished(view, url);
+//                mProgressBar.setVisibility(View.GONE);
+//                mWebView.setVisibility(View.VISIBLE);
+//                // Toast.makeText(NewsDetailActivity.this, "onPageFinished", Toast.LENGTH_SHORT).show();
+//            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                return super.shouldOverrideUrlLoading(view, request);
+            }
+
+        });
         mWebView.loadUrl(url);
     }
 
@@ -101,12 +127,14 @@ public class NewsDetailActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance();
         mReferenceNews = mDatabase.getReference("news");
         mIsAddNews = false;
-        mImageView = findViewById(R.id.backdrop);
+        mWebView = findViewById(R.id.webView);
+        mProgressBar = findViewById(R.id.progress_bar);
+        //mImageView = findViewById(R.id.backdrop);
         mTvAppBarTitle = findViewById(R.id.title_on_appbar);
         mTvAppBarSubTitle = findViewById(R.id.subtitile_on_appbar);
-        mTvTitle = findViewById(R.id.title_on_cardview);
-        mTvTime = findViewById(R.id.time_on_cardview);
-        mTvDate = findViewById(R.id.tv_date);
+        //mTvTitle = findViewById(R.id.title_on_cardview);
+        //mTvTime = findViewById(R.id.time_on_cardview);
+        //mTvDate = findViewById(R.id.tv_date);
         final LinearLayout linearLayout = findViewById(R.id.ln_title_appbar);
         mShareDialog = new ShareDialog(this);
         Toolbar toolbar = findViewById(R.id.toolbar_news_detail);
@@ -114,27 +142,27 @@ public class NewsDetailActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar_layout);
-        collapsingToolbarLayout.setTitle("");
+        //CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar_layout);
+        //collapsingToolbarLayout.setTitle("");
 
-        AppBarLayout appBarLayout = findViewById(R.id.app_bar_layout);
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                int maxScroll = appBarLayout.getTotalScrollRange();
-                float percentage = (float) Math.abs(verticalOffset) / (float) maxScroll;
-
-                if (percentage == 1f && isHideToolbarView) {
-                    mTvDate.setVisibility(View.GONE);
-                    linearLayout.setVisibility(View.VISIBLE);
-                    isHideToolbarView = !isHideToolbarView;
-                } else if (percentage < 1f && isHideToolbarView) {
-                    mTvDate.setVisibility(View.VISIBLE);
-                    linearLayout.setVisibility(View.GONE);
-                    isHideToolbarView = !isHideToolbarView;
-                }
-            }
-        });
+        //AppBarLayout appBarLayout = findViewById(R.id.app_bar_layout);
+        //appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+//            @Override
+//            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+//                int maxScroll = appBarLayout.getTotalScrollRange();
+//                float percentage = (float) Math.abs(verticalOffset) / (float) maxScroll;
+//
+//                if (percentage == 1f && isHideToolbarView) {
+//                    mTvDate.setVisibility(View.GONE);
+//                    linearLayout.setVisibility(View.VISIBLE);
+//                    isHideToolbarView = !isHideToolbarView;
+//                } else if (percentage < 1f && isHideToolbarView) {
+//                    mTvDate.setVisibility(View.VISIBLE);
+//                    linearLayout.setVisibility(View.GONE);
+//                    isHideToolbarView = !isHideToolbarView;
+//                }
+//            }
+//        });
     }
 
 
@@ -164,7 +192,7 @@ public class NewsDetailActivity extends AppCompatActivity {
             case R.id.bookmark:
                 if (mIsAddNews == false) {
                     mKey = mReferenceNews.push().getKey();
-                    News news = new News(mTitle, mDescription, mUrl, mUrlToImage, mPubDate, mAuthor, mSource);
+                    News news = new News(mTitle, mDescription, mUrl, mUrlToImage, mPubDate, mAuthor, mSource, mKey, mTime);
                     mReferenceNews.child(mKey).setValue(news).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -202,13 +230,6 @@ public class NewsDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class MyBrowser extends WebViewClient {
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(url);
-            return true;
-        }
-    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

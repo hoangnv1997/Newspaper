@@ -48,12 +48,20 @@ public class VnExpressFragment extends Fragment {
     private NewsAdapter mNewsAdapter;
     private List<News> mList;
     private LoadDataAsyncTask mLoadDataAsyncTask;
-    private String mPath;
+    private static String mPath;
     private RelativeLayout mErrorLayout;
     private Button mButtonRetry;
 
-    public VnExpressFragment(String mPath) {
-        this.mPath = mPath;
+    //    public VnExpressFragment(String mPath) {
+//        this.mPath = mPath;
+//    }
+    public static VnExpressFragment newInstance(String mPath) {
+        Bundle args = new Bundle();
+        VnExpressFragment.mPath = mPath;
+        args.putString("id", mPath);
+        VnExpressFragment f = new VnExpressFragment();
+        f.setArguments(args);
+        return f;
     }
 
     @Nullable
@@ -61,7 +69,7 @@ public class VnExpressFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.vietnamnet_fragment, container, false);
 
-        mProgressBar = view.findViewById(R.id.progressbar);
+        // mProgressBar = view.findViewById(R.id.progressbar);
         mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         mErrorLayout = view.findViewById(R.id.errorLayout);
         mButtonRetry = view.findViewById(R.id.btn_retry);
@@ -85,9 +93,9 @@ public class VnExpressFragment extends Fragment {
         mButtonRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Utils.isOnline(getContext())== true) {
+                if (Utils.isOnline(getContext()) == true) {
                     mErrorLayout.setVisibility(View.GONE);
-                    mFragment = new VnExpressFragment(mPath);
+                    mFragment = VnExpressFragment.newInstance(mPath);
                     loadFragment(mFragment);
                 } else {
                     Toast.makeText(getActivity(), "Không có kết nối internet", Toast.LENGTH_SHORT).show();
@@ -107,8 +115,10 @@ public class VnExpressFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressBar.setVisibility(View.VISIBLE);
+            mSwipeRefreshLayout.setRefreshing(true);
+            // mProgressBar.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.GONE);
+            //mSwipeRefreshLayout.setVisibility(View.GONE);
             mList = new ArrayList<>();
 
         }
@@ -138,7 +148,8 @@ public class VnExpressFragment extends Fragment {
                     news.setmUrl(mUrl);
                     news.setmTitle(mTitle);
                     news.setmDescription(mDescription);
-                    news.setmPubDate(mPubDate);
+                    news.setmPubDate(Utils.DateFormat(mPubDate));
+                    news.setmTime(Utils.DateToTimeFormat(mPubDate));
                     news.setmUrlToImage(mUrlToImage);
                     news.setmSource(LinkRSS.VNEXPRESS_LINK);
                     news.setmAuthor(LinkRSS.VNEXPRESS_SOURCE);
@@ -158,8 +169,10 @@ public class VnExpressFragment extends Fragment {
         @Override
         protected void onPostExecute(List<News> news) {
             super.onPostExecute(news);
-            mProgressBar.setVisibility(View.GONE);
+//            mProgressBar.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
+            mSwipeRefreshLayout.setRefreshing(false);
+            //mSwipeRefreshLayout.setVisibility(View.VISIBLE);
             mNewsAdapter = new NewsAdapter(mList, getContext());
             mRecyclerView.setAdapter(mNewsAdapter);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -194,6 +207,7 @@ public class VnExpressFragment extends Fragment {
                 intent.putExtra("PubDate", news.getmPubDate());
                 intent.putExtra("Source", news.getmSource());
                 intent.putExtra("Author", news.getmAuthor());
+                intent.putExtra("Time", news.getmTime());
                 startActivity(intent);
             }
         });
@@ -209,43 +223,43 @@ public class VnExpressFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.chinh_tri:
-                mFragment = new VnExpressFragment(LinkRSS.VNEXPRESS_CHINH_TRI);
+                mFragment =  VnExpressFragment.newInstance(LinkRSS.VNEXPRESS_CHINH_TRI);
                 loadFragment(mFragment);
                 return true;
             case R.id.thoi_su:
-                mFragment = new VnExpressFragment(LinkRSS.VNEXPRESS_THOI_SU);
+                mFragment =  VnExpressFragment.newInstance(LinkRSS.VNEXPRESS_THOI_SU);
                 loadFragment(mFragment);
                 return true;
             case R.id.kinh_doanh:
-                mFragment = new VnExpressFragment(LinkRSS.VNEXPRESS_KINH_DOANH);
+                mFragment =  VnExpressFragment.newInstance(LinkRSS.VNEXPRESS_KINH_DOANH);
                 loadFragment(mFragment);
                 return true;
             case R.id.giai_tri:
-                mFragment = new VnExpressFragment(LinkRSS.VNEXPRESS_GIAI_TRI);
+                mFragment =  VnExpressFragment.newInstance(LinkRSS.VNEXPRESS_GIAI_TRI);
                 loadFragment(mFragment);
                 return true;
             case R.id.the_gioi:
-                mFragment = new VnExpressFragment(LinkRSS.VNEXPRESS_THE_GIOI);
+                mFragment =  VnExpressFragment.newInstance(LinkRSS.VNEXPRESS_THE_GIOI);
                 loadFragment(mFragment);
                 return true;
             case R.id.the_thao:
-                mFragment = new VnExpressFragment(LinkRSS.VNEXPRESS_THE_THAO);
+                mFragment =  VnExpressFragment.newInstance(LinkRSS.VNEXPRESS_THE_THAO);
                 loadFragment(mFragment);
                 return true;
             case R.id.cong_nghe:
-                mFragment = new VnExpressFragment(LinkRSS.VNEXPRESS_CONG_NGHE);
+                mFragment =  VnExpressFragment.newInstance(LinkRSS.VNEXPRESS_CONG_NGHE);
                 loadFragment(mFragment);
                 return true;
             case R.id.suc_khoe:
-                mFragment = new VnExpressFragment(LinkRSS.VNEXPRESS_SUC_KHOE);
+                mFragment =  VnExpressFragment.newInstance(LinkRSS.VNEXPRESS_SUC_KHOE);
                 loadFragment(mFragment);
                 return true;
             case R.id.doi_song:
-                mFragment = new VnExpressFragment(LinkRSS.VNEXPRESS_DOI_SONG);
+                mFragment =  VnExpressFragment.newInstance(LinkRSS.VNEXPRESS_DOI_SONG);
                 loadFragment(mFragment);
                 return true;
             case R.id.phap_luat:
-                mFragment = new VnExpressFragment(LinkRSS.VNEXPRESS_PHAP_LUAT);
+                mFragment =  VnExpressFragment.newInstance(LinkRSS.VNEXPRESS_PHAP_LUAT);
                 loadFragment(mFragment);
                 return true;
 

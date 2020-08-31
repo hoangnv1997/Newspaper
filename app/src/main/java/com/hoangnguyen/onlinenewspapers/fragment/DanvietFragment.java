@@ -49,20 +49,28 @@ public class DanvietFragment extends Fragment {
     private NewsAdapter mNewsAdapter;
     private List<News> mList;
     private LoadDataAsyncTask mLoadDataAsyncTask;
-    private String mPath;
+    private static String mPath;
     private RelativeLayout mErrorLayout;
     private Button mButtonRetry;
 
-    public DanvietFragment(String mPath) {
-        this.mPath = mPath;
-    }
+//    public DanvietFragment(String mPath) {
+//        this.mPath = mPath;
+//    }
+public static DanvietFragment newInstance(String mPath) {
+    Bundle args = new Bundle();
+    DanvietFragment.mPath = mPath;
+    args.putString("id", mPath);
+    DanvietFragment f = new DanvietFragment();
+    f.setArguments(args);
+    return f;
+}
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.vietnamnet_fragment, container, false);
 
-        mProgressBar = view.findViewById(R.id.progressbar);
+        //mProgressBar = view.findViewById(R.id.progressbar);
         mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -86,9 +94,9 @@ public class DanvietFragment extends Fragment {
         mButtonRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Utils.isOnline(getContext())== true) {
+                if (Utils.isOnline(getContext()) == true) {
                     mErrorLayout.setVisibility(View.GONE);
-                    mFragment = new DanvietFragment(mPath);
+                    mFragment =  DanvietFragment.newInstance(mPath);
                     loadFragment(mFragment);
                 } else {
                     Toast.makeText(getActivity(), "Không có kết nối internet", Toast.LENGTH_SHORT).show();
@@ -108,8 +116,9 @@ public class DanvietFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressBar.setVisibility(View.VISIBLE);
-
+            // mProgressBar.setVisibility(View.VISIBLE);
+            // mSwipeRefreshLayout.setVisibility(View.GONE);
+            mSwipeRefreshLayout.setRefreshing(true);
             mRecyclerView.setVisibility(View.GONE);
             mList = new ArrayList<>();
 
@@ -140,7 +149,8 @@ public class DanvietFragment extends Fragment {
                     news.setmUrl(mUrl);
                     news.setmTitle(mTitle);
                     news.setmDescription(mDescription);
-                    news.setmPubDate(mPubDate);
+                    news.setmPubDate(Utils.DateFormat(mPubDate));
+                    news.setmTime(Utils.DateToTimeFormat(mPubDate));
                     news.setmUrlToImage(mUrlToImage);
                     news.setmSource(LinkRSS.DANVIET_LINK);
                     news.setmAuthor(LinkRSS.DANVIET_SOURCE);
@@ -160,9 +170,10 @@ public class DanvietFragment extends Fragment {
         @Override
         protected void onPostExecute(List<News> news) {
             super.onPostExecute(news);
-            mProgressBar.setVisibility(View.GONE);
+            // mProgressBar.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
-
+            mSwipeRefreshLayout.setRefreshing(false);
+            // mSwipeRefreshLayout.setVisibility(View.VISIBLE);
             mNewsAdapter = new NewsAdapter(mList, getContext());
             mRecyclerView.setAdapter(mNewsAdapter);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -197,6 +208,7 @@ public class DanvietFragment extends Fragment {
                 intent.putExtra("PubDate", news.getmPubDate());
                 intent.putExtra("Source", news.getmSource());
                 intent.putExtra("Author", news.getmAuthor());
+                intent.putExtra("Time", news.getmTime());
                 startActivity(intent);
             }
         });
@@ -212,43 +224,43 @@ public class DanvietFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.tin_tuc:
-                mFragment = new DanvietFragment(LinkRSS.DANVIET_TIN_TUC);
+                mFragment =  DanvietFragment.newInstance(LinkRSS.DANVIET_TIN_TUC);
                 loadFragment(mFragment);
                 return true;
             case R.id.the_gioi:
-                mFragment = new DanvietFragment(LinkRSS.DANVIET_THE_GIOI);
+                mFragment =  DanvietFragment.newInstance(LinkRSS.DANVIET_THE_GIOI);
                 loadFragment(mFragment);
                 return true;
             case R.id.nha_nong:
-                mFragment = new DanvietFragment(LinkRSS.DANVIET_NHA_NONG);
+                mFragment =  DanvietFragment.newInstance(LinkRSS.DANVIET_NHA_NONG);
                 loadFragment(mFragment);
                 return true;
             case R.id.the_thao:
-                mFragment = new DanvietFragment(LinkRSS.DANVIET_THE_THAO);
+                mFragment =  DanvietFragment.newInstance(LinkRSS.DANVIET_THE_THAO);
                 loadFragment(mFragment);
                 return true;
             case R.id.phap_luat:
-                mFragment = new DanvietFragment(LinkRSS.DANVIET_PHAP_LUAT);
+                mFragment =  DanvietFragment.newInstance(LinkRSS.DANVIET_PHAP_LUAT);
                 loadFragment(mFragment);
                 return true;
             case R.id.kinh_te:
-                mFragment = new DanvietFragment(LinkRSS.DANVIET_KINH_TE);
+                mFragment =  DanvietFragment.newInstance(LinkRSS.DANVIET_KINH_TE);
                 loadFragment(mFragment);
                 return true;
             case R.id.van_hoa:
-                mFragment = new DanvietFragment(LinkRSS.DANVIET_VAN_HOA);
+                mFragment =  DanvietFragment.newInstance(LinkRSS.DANVIET_VAN_HOA);
                 loadFragment(mFragment);
                 return true;
             case R.id.du_lich:
-                mFragment = new DanvietFragment(LinkRSS.DANVIET_DU_LICH);
+                mFragment =  DanvietFragment.newInstance(LinkRSS.DANVIET_DU_LICH);
                 loadFragment(mFragment);
                 return true;
             case R.id.gia_dinh:
-                mFragment = new DanvietFragment(LinkRSS.DANVIET_GIA_DINH);
+                mFragment =  DanvietFragment.newInstance(LinkRSS.DANVIET_GIA_DINH);
                 loadFragment(mFragment);
                 return true;
             case R.id.cong_nghe:
-                mFragment = new DanvietFragment(LinkRSS.DANVIET_CONG_NGHE);
+                mFragment =  DanvietFragment.newInstance(LinkRSS.DANVIET_CONG_NGHE);
                 loadFragment(mFragment);
                 return true;
 

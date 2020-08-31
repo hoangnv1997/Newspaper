@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -32,6 +33,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.hoangnguyen.onlinenewspapers.R;
 import com.hoangnguyen.onlinenewspapers.activity.NewsDetailActivity;
+import com.hoangnguyen.onlinenewspapers.adapter.BookmarkNewsAdapter;
 import com.hoangnguyen.onlinenewspapers.adapter.NewsAdapter;
 import com.hoangnguyen.onlinenewspapers.commom.Utils;
 import com.hoangnguyen.onlinenewspapers.model.News;
@@ -44,17 +46,25 @@ public class BookmarkFragment extends Fragment {
     private List<News> mList;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
-    private NewsAdapter mNewsAdapter;
+    private BookmarkNewsAdapter mNewsAdapter;
     private View mView;
     private ProgressBar mProgressBar;
     private LoadDataAsynTask mLoadDataAsynTask;
-    private String mChild;
+    private static String mChild;
     private RelativeLayout mErrorLayout;
     private Button mButtonRetry;
     private Fragment mFragment;
 
-    public BookmarkFragment(String mChild) {
-        this.mChild = mChild;
+    //    public BookmarkFragment(String mChild) {
+//        this.mChild = mChild;
+//    }
+    public static BookmarkFragment newInstance(String mPath) {
+        Bundle args = new Bundle();
+        BookmarkFragment.mChild = mPath;
+        args.putString("id", mPath);
+        BookmarkFragment f = new BookmarkFragment();
+        f.setArguments(args);
+        return f;
     }
 
     @Nullable
@@ -67,7 +77,7 @@ public class BookmarkFragment extends Fragment {
     }
 
     private void init() {
-        mProgressBar = mView.findViewById(R.id.progressbar);
+        //mProgressBar = mView.findViewById(R.id.progressbar);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mList = new ArrayList<>();
         mSwipeRefreshLayout = mView.findViewById(R.id.swipe_refresh_layout);
@@ -83,7 +93,7 @@ public class BookmarkFragment extends Fragment {
             public void onClick(View v) {
                 if (Utils.isOnline(getContext()) == true) {
                     mErrorLayout.setVisibility(View.GONE);
-                    mFragment = new BookmarkFragment(mChild);
+                    mFragment =  BookmarkFragment.newInstance(mChild);
                     loadFragment(mFragment);
                 } else {
                     Toast.makeText(getActivity(), "Không có kết nối internet", Toast.LENGTH_SHORT).show();
@@ -126,7 +136,9 @@ public class BookmarkFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressBar.setVisibility(View.VISIBLE);
+            // mProgressBar.setVisibility(View.VISIBLE);
+            // mSwipeRefreshLayout.setVisibility(View.GONE);
+            mSwipeRefreshLayout.setRefreshing(true);
             mRecyclerView.setVisibility(View.GONE);
         }
 
@@ -172,16 +184,18 @@ public class BookmarkFragment extends Fragment {
         @Override
         protected void onPostExecute(List<News> news) {
             super.onPostExecute(news);
-            mProgressBar.setVisibility(View.GONE);
+            // mProgressBar.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
-            mNewsAdapter = new NewsAdapter(news, getContext());
+            mSwipeRefreshLayout.setRefreshing(false);
+            //mSwipeRefreshLayout.setVisibility(View.VISIBLE);
+            mNewsAdapter = new BookmarkNewsAdapter(news, getContext());
             mRecyclerView.setAdapter(mNewsAdapter);
             listener();
         }
     }
 
     private void listener() {
-        mNewsAdapter.setOnItemClickListener(new NewsAdapter.ItemClickListener() {
+        mNewsAdapter.setOnItemClickListener(new BookmarkNewsAdapter.ItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
                 News news = mList.get(position);
@@ -192,9 +206,11 @@ public class BookmarkFragment extends Fragment {
                 intent.putExtra("PubDate", news.getmPubDate());
                 intent.putExtra("Source", news.getmSource());
                 intent.putExtra("Author", news.getmAuthor());
+                intent.putExtra("Time", news.getmTime());
                 startActivity(intent);
             }
         });
+
     }
 
     public void loadFragment(Fragment fragment) {
@@ -211,7 +227,7 @@ public class BookmarkFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.delete_all:
                 mDatabase.child("news").removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

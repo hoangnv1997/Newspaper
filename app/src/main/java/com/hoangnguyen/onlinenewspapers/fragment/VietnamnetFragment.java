@@ -3,6 +3,7 @@ package com.hoangnguyen.onlinenewspapers.fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,14 +48,22 @@ public class VietnamnetFragment extends Fragment implements SwipeRefreshLayout.O
     private ProgressBar mProgressBar;
     private List<News> mListNews;
     private NewsAdapter mNewsAdapter;
-    private String mPath;
+    private static String mPath;
     private LoadDataAsyncTask mLoadDataAsyncTask;
     private Fragment mFragment;
     private RelativeLayout mErrorLayout;
     private Button mButtonRetry;
 
-    public VietnamnetFragment(String mPath) {
-        this.mPath = mPath;
+    //    public VietnamnetFragment(String mPath) {
+//        this.mPath = mPath;
+//    }
+    public static VietnamnetFragment newInstance(String mPath) {
+        Bundle args = new Bundle();
+        VietnamnetFragment.mPath = mPath;
+        args.putString("id", mPath);
+        VietnamnetFragment f = new VietnamnetFragment();
+        f.setArguments(args);
+        return f;
     }
 
     @Nullable
@@ -62,7 +71,7 @@ public class VietnamnetFragment extends Fragment implements SwipeRefreshLayout.O
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.vietnamnet_fragment, container, false);
 
-        mProgressBar = view.findViewById(R.id.progressbar);
+        //mProgressBar = view.findViewById(R.id.progressbar);
 
         mRecyclerView = view.findViewById(R.id.rv_news);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -82,9 +91,9 @@ public class VietnamnetFragment extends Fragment implements SwipeRefreshLayout.O
         mButtonRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Utils.isOnline(getContext())== true) {
+                if (Utils.isOnline(getContext()) == true) {
                     mErrorLayout.setVisibility(View.GONE);
-                    mFragment = new VietnamnetFragment(mPath);
+                    mFragment = VietnamnetFragment.newInstance(mPath);
                     loadFragment(mFragment);
                 } else {
                     Toast.makeText(getActivity(), "Không có kết nối internet", Toast.LENGTH_SHORT).show();
@@ -111,7 +120,6 @@ public class VietnamnetFragment extends Fragment implements SwipeRefreshLayout.O
     }
 
 
-
     private void listener() {
         mNewsAdapter.setOnItemClickListener(new NewsAdapter.ItemClickListener() {
             @Override
@@ -125,6 +133,7 @@ public class VietnamnetFragment extends Fragment implements SwipeRefreshLayout.O
                 intent.putExtra("Source", news.getmSource());
                 intent.putExtra("Author", news.getmAuthor());
                 intent.putExtra("Description", news.getmDescription());
+                intent.putExtra("Time", news.getmTime());
                 startActivity(intent);
             }
         });
@@ -147,7 +156,8 @@ public class VietnamnetFragment extends Fragment implements SwipeRefreshLayout.O
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressBar.setVisibility(View.VISIBLE);
+
+            mSwipeRefreshLayout.setRefreshing(true);
             mRecyclerView.setVisibility(View.GONE);
             mListNews = new ArrayList<>();
         }
@@ -178,9 +188,11 @@ public class VietnamnetFragment extends Fragment implements SwipeRefreshLayout.O
                     news.setmDescription(mDescription);
                     news.setmUrl(mUrl);
                     news.setmUrlToImage(mUrlToImage);
-                    news.setmPubDate(mPubDate);
+                    news.setmPubDate(Utils.DateFormat(mPubDate));
                     news.setmSource(LinkRSS.VIETNAMNET_LINK);
                     news.setmAuthor(LinkRSS.VIETNAMNET_SOURCE);
+                    news.setmTime(Utils.DateToTimeFormat(mPubDate));
+                    Log.d("mmm", String.valueOf(news.getmTime()));
                     mListNews.add(news);
 
                 }
@@ -198,9 +210,9 @@ public class VietnamnetFragment extends Fragment implements SwipeRefreshLayout.O
         @Override
         protected void onPostExecute(List<News> news) {
             super.onPostExecute(news);
-            mProgressBar.setVisibility(View.GONE);
-            mRecyclerView.setVisibility(View.VISIBLE);
 
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mSwipeRefreshLayout.setRefreshing(false);
             mNewsAdapter = new NewsAdapter(mListNews, getContext());
             mRecyclerView.setAdapter(mNewsAdapter);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -219,43 +231,43 @@ public class VietnamnetFragment extends Fragment implements SwipeRefreshLayout.O
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.chinh_tri:
-                mFragment = new VietnamnetFragment(LinkRSS.VIETNAMNET_CHINH_TRI);
+                mFragment =  VietnamnetFragment.newInstance(LinkRSS.VIETNAMNET_CHINH_TRI);
                 loadFragment(mFragment);
                 return true;
             case R.id.thoi_su:
-                mFragment = new VietnamnetFragment(LinkRSS.VIETNAMNET_THOI_SU);
+                mFragment =  VietnamnetFragment.newInstance(LinkRSS.VIETNAMNET_THOI_SU);
                 loadFragment(mFragment);
                 return true;
             case R.id.kinh_doanh:
-                mFragment = new VietnamnetFragment(LinkRSS.VIETNAMNET_KINH_DOANH);
+                mFragment =  VietnamnetFragment.newInstance(LinkRSS.VIETNAMNET_KINH_DOANH);
                 loadFragment(mFragment);
                 return true;
             case R.id.giai_tri:
-                mFragment = new VietnamnetFragment(LinkRSS.VIETNAMNET_GIAI_TRI);
+                mFragment =  VietnamnetFragment.newInstance(LinkRSS.VIETNAMNET_GIAI_TRI);
                 loadFragment(mFragment);
                 return true;
             case R.id.the_gioi:
-                mFragment = new VietnamnetFragment(LinkRSS.VIETNAMNET_THE_GIOI);
+                mFragment = VietnamnetFragment.newInstance(LinkRSS.VIETNAMNET_THE_GIOI);
                 loadFragment(mFragment);
                 return true;
             case R.id.the_thao:
-                mFragment = new VietnamnetFragment(LinkRSS.VIETNAMNET_THE_THAO);
+                mFragment =  VietnamnetFragment.newInstance(LinkRSS.VIETNAMNET_THE_THAO);
                 loadFragment(mFragment);
                 return true;
             case R.id.cong_nghe:
-                mFragment = new VietnamnetFragment(LinkRSS.VIETNAMNET_CONG_NGHE);
+                mFragment = VietnamnetFragment.newInstance(LinkRSS.VIETNAMNET_CONG_NGHE);
                 loadFragment(mFragment);
                 return true;
             case R.id.suc_khoe:
-                mFragment = new VietnamnetFragment(LinkRSS.VIETNAMNET_SUC_KHOE);
+                mFragment = VietnamnetFragment.newInstance(LinkRSS.VIETNAMNET_SUC_KHOE);
                 loadFragment(mFragment);
                 return true;
             case R.id.doi_song:
-                mFragment = new VietnamnetFragment(LinkRSS.VIETNAMNET_DOI_SONG);
+                mFragment = VietnamnetFragment.newInstance(LinkRSS.VIETNAMNET_DOI_SONG);
                 loadFragment(mFragment);
                 return true;
             case R.id.phap_luat:
-                mFragment = new VietnamnetFragment(LinkRSS.VIETNAMNET_PHAP_LUAT);
+                mFragment = VietnamnetFragment.newInstance(LinkRSS.VIETNAMNET_PHAP_LUAT);
                 loadFragment(mFragment);
                 return true;
 

@@ -49,12 +49,20 @@ public class TuoitreFragment extends Fragment {
     private NewsAdapter mNewsAdapter;
     private List<News> mList;
     private LoadDataAsyncTask mLoadDataAsyncTask;
-    private String mPath;
+    private static String mPath;
     private RelativeLayout mErrorLayout;
     private Button mButtonRetry;
 
-    public TuoitreFragment(String mPath) {
-        this.mPath = mPath;
+    //    public TuoitreFragment(String mPath) {
+//        this.mPath = mPath;
+//    }
+    public static TuoitreFragment newInstance(String mPath) {
+        Bundle args = new Bundle();
+        TuoitreFragment.mPath = mPath;
+        args.putString("id", mPath);
+        TuoitreFragment f = new TuoitreFragment();
+        f.setArguments(args);
+        return f;
     }
 
     @Nullable
@@ -62,16 +70,9 @@ public class TuoitreFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.vietnamnet_fragment, container, false);
 
-        mProgressBar = view.findViewById(R.id.progressbar);
+        //mProgressBar = view.findViewById(R.id.progressbar);
         mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mSwipeRefreshLayout.setRefreshing(false);
-                mNewsAdapter.clear();
-                loadData();
-            }
-        });
+
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
 
         mRecyclerView = view.findViewById(R.id.rv_news);
@@ -82,12 +83,20 @@ public class TuoitreFragment extends Fragment {
         mErrorLayout = view.findViewById(R.id.errorLayout);
         mButtonRetry = view.findViewById(R.id.btn_retry);
         loadData();
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(false);
+                mNewsAdapter.clear();
+                loadData();
+            }
+        });
         mButtonRetry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (Utils.isOnline(getContext()) == true) {
                     mErrorLayout.setVisibility(View.GONE);
-                    mFragment = new TuoitreFragment(mPath);
+                    mFragment = TuoitreFragment.newInstance(mPath);
                     loadFragment(mFragment);
                 } else {
                     Toast.makeText(getActivity(), "Không có kết nối internet", Toast.LENGTH_SHORT).show();
@@ -107,8 +116,9 @@ public class TuoitreFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressBar.setVisibility(View.VISIBLE);
-
+            mSwipeRefreshLayout.setRefreshing(true);
+            //mProgressBar.setVisibility(View.VISIBLE);
+            // mSwipeRefreshLayout.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.GONE);
             mList = new ArrayList<>();
 
@@ -139,7 +149,8 @@ public class TuoitreFragment extends Fragment {
                     news.setmUrl(mUrl);
                     news.setmTitle(mTitle);
                     news.setmDescription(mDescription);
-                    news.setmPubDate(mPubDate);
+                    news.setmPubDate(Utils.DateFormat(mPubDate));
+                    news.setmTime(Utils.DateToTimeFormat(mPubDate));
                     news.setmUrlToImage(mUrlToImage);
                     news.setmSource(LinkRSS.TUOITRE_LINK);
                     news.setmAuthor(LinkRSS.TUOITRE_SOURCE);
@@ -159,9 +170,10 @@ public class TuoitreFragment extends Fragment {
         @Override
         protected void onPostExecute(List<News> news) {
             super.onPostExecute(news);
-            mProgressBar.setVisibility(View.GONE);
+            //mProgressBar.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
-
+            mSwipeRefreshLayout.setRefreshing(false);
+            //mSwipeRefreshLayout.setVisibility(View.VISIBLE);
             mNewsAdapter = new NewsAdapter(mList, getContext());
             mRecyclerView.setAdapter(mNewsAdapter);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -196,6 +208,7 @@ public class TuoitreFragment extends Fragment {
                 intent.putExtra("PubDate", news.getmPubDate());
                 intent.putExtra("Source", news.getmSource());
                 intent.putExtra("Author", news.getmAuthor());
+                intent.putExtra("Time", news.getmTime());
                 startActivity(intent);
             }
         });
@@ -211,43 +224,43 @@ public class TuoitreFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.giao_duc:
-                mFragment = new TuoitreFragment(LinkRSS.TUOITRE_GIAO_DUC);
+                mFragment = TuoitreFragment.newInstance(LinkRSS.TUOITRE_GIAO_DUC);
                 loadFragment(mFragment);
                 return true;
             case R.id.thoi_su:
-                mFragment = new TuoitreFragment(LinkRSS.TUOITRE_THOI_SU);
+                mFragment = TuoitreFragment.newInstance(LinkRSS.TUOITRE_THOI_SU);
                 loadFragment(mFragment);
                 return true;
             case R.id.kinh_doanh:
-                mFragment = new TuoitreFragment(LinkRSS.TUOITRE_KINH_DOANH);
+                mFragment = TuoitreFragment.newInstance(LinkRSS.TUOITRE_KINH_DOANH);
                 loadFragment(mFragment);
                 return true;
             case R.id.giai_tri:
-                mFragment = new TuoitreFragment(LinkRSS.TUOITRE_GIAI_TRI);
+                mFragment = TuoitreFragment.newInstance(LinkRSS.TUOITRE_GIAI_TRI);
                 loadFragment(mFragment);
                 return true;
             case R.id.the_gioi:
-                mFragment = new TuoitreFragment(LinkRSS.TUOITRE_THE_GIOI);
+                mFragment = TuoitreFragment.newInstance(LinkRSS.TUOITRE_THE_GIOI);
                 loadFragment(mFragment);
                 return true;
             case R.id.the_thao:
-                mFragment = new TuoitreFragment(LinkRSS.TUOITRE_THE_THAO);
+                mFragment = TuoitreFragment.newInstance(LinkRSS.TUOITRE_THE_THAO);
                 loadFragment(mFragment);
                 return true;
             case R.id.cong_nghe:
-                mFragment = new TuoitreFragment(LinkRSS.TUOITRE_CONG_NGHE);
+                mFragment = TuoitreFragment.newInstance(LinkRSS.TUOITRE_CONG_NGHE);
                 loadFragment(mFragment);
                 return true;
             case R.id.suc_khoe:
-                mFragment = new TuoitreFragment(LinkRSS.TUOITRE_SUC_KHOE);
+                mFragment = TuoitreFragment.newInstance(LinkRSS.TUOITRE_SUC_KHOE);
                 loadFragment(mFragment);
                 return true;
             case R.id.doi_song:
-                mFragment = new TuoitreFragment(LinkRSS.TUOITRE_DOI_SONG);
+                mFragment = TuoitreFragment.newInstance(LinkRSS.TUOITRE_DOI_SONG);
                 loadFragment(mFragment);
                 return true;
             case R.id.phap_luat:
-                mFragment = new TuoitreFragment(LinkRSS.TUOITRE_PHAP_LUAT);
+                mFragment = TuoitreFragment.newInstance(LinkRSS.TUOITRE_PHAP_LUAT);
                 loadFragment(mFragment);
                 return true;
 

@@ -49,12 +49,20 @@ public class TwentyFourFragment extends Fragment {
     private NewsAdapter mNewsAdapter;
     private List<News> mList;
     private LoadDataAsyncTask mLoadDataAsyncTask;
-    private String mPath;
+    private static String mPath;
     private RelativeLayout mErrorLayout;
     private Button mButtonRetry;
 
-    public TwentyFourFragment(String mPath) {
-        this.mPath = mPath;
+    //    public TwentyFourFragment(String mPath) {
+//        this.mPath = mPath;
+//    }
+    public static TwentyFourFragment newInstance(String mPath) {
+        Bundle args = new Bundle();
+        TwentyFourFragment.mPath = mPath;
+        args.putString("id", mPath);
+        TwentyFourFragment f = new TwentyFourFragment();
+        f.setArguments(args);
+        return f;
     }
 
     @Nullable
@@ -62,7 +70,7 @@ public class TwentyFourFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.vietnamnet_fragment, container, false);
 
-        mProgressBar = view.findViewById(R.id.progressbar);
+        // mProgressBar = view.findViewById(R.id.progressbar);
         mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -87,7 +95,7 @@ public class TwentyFourFragment extends Fragment {
             public void onClick(View v) {
                 if (Utils.isOnline(getContext()) == true) {
                     mErrorLayout.setVisibility(View.GONE);
-                    mFragment = new TwentyFourFragment(mPath);
+                    mFragment =  TwentyFourFragment.newInstance(mPath);
                     loadFragment(mFragment);
                 } else {
                     Toast.makeText(getActivity(), "Không có kết nối internet", Toast.LENGTH_SHORT).show();
@@ -107,8 +115,10 @@ public class TwentyFourFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressBar.setVisibility(View.VISIBLE);
+            // mProgressBar.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.GONE);
+            mSwipeRefreshLayout.setRefreshing(true);
+            // mSwipeRefreshLayout.setVisibility(View.GONE);
             mList = new ArrayList<>();
 
         }
@@ -138,7 +148,8 @@ public class TwentyFourFragment extends Fragment {
                     news.setmUrl(mUrl);
                     news.setmTitle(mTitle);
                     news.setmDescription(mDescription);
-                    news.setmPubDate(mPubDate);
+                    news.setmPubDate(Utils.DateFormat(mPubDate));
+                    news.setmTime(Utils.DateToTimeFormat(mPubDate));
                     news.setmUrlToImage(mUrlToImage);
                     news.setmSource(LinkRSS._24H_LINK);
                     news.setmAuthor(LinkRSS._24H_SOURCE);
@@ -158,9 +169,10 @@ public class TwentyFourFragment extends Fragment {
         @Override
         protected void onPostExecute(List<News> news) {
             super.onPostExecute(news);
-            mProgressBar.setVisibility(View.GONE);
+            //mProgressBar.setVisibility(View.GONE);
             mRecyclerView.setVisibility(View.VISIBLE);
-
+            mSwipeRefreshLayout.setRefreshing(false);
+            // mSwipeRefreshLayout.setVisibility(View.VISIBLE);
             mNewsAdapter = new NewsAdapter(mList, getContext());
             mRecyclerView.setAdapter(mNewsAdapter);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -195,6 +207,7 @@ public class TwentyFourFragment extends Fragment {
                 intent.putExtra("PubDate", news.getmPubDate());
                 intent.putExtra("Source", news.getmSource());
                 intent.putExtra("Author", news.getmAuthor());
+                intent.putExtra("Time", news.getmTime());
                 startActivity(intent);
             }
         });
@@ -210,43 +223,43 @@ public class TwentyFourFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.du_lich:
-                mFragment = new TwentyFourFragment(LinkRSS._24H_DU_LICH);
+                mFragment =  TwentyFourFragment.newInstance(LinkRSS._24H_DU_LICH);
                 loadFragment(mFragment);
                 return true;
             case R.id.tin_tuc_trong_ngay:
-                mFragment = new TwentyFourFragment(LinkRSS._24H_TIN_TUC_TRONG_NGAY);
+                mFragment =  TwentyFourFragment.newInstance(LinkRSS._24H_TIN_TUC_TRONG_NGAY);
                 loadFragment(mFragment);
                 return true;
             case R.id.bong_da:
-                mFragment = new TwentyFourFragment(LinkRSS._24H_BONG_DA);
+                mFragment =  TwentyFourFragment.newInstance(LinkRSS._24H_BONG_DA);
                 loadFragment(mFragment);
                 return true;
             case R.id.thoi_trang:
-                mFragment = new TwentyFourFragment(LinkRSS._24H_THOI_TRANG);
+                mFragment =  TwentyFourFragment.newInstance(LinkRSS._24H_THOI_TRANG);
                 loadFragment(mFragment);
                 return true;
             case R.id.am_thuc:
-                mFragment = new TwentyFourFragment(LinkRSS._24H_AM_THUC);
+                mFragment =  TwentyFourFragment.newInstance(LinkRSS._24H_AM_THUC);
                 loadFragment(mFragment);
                 return true;
             case R.id.phim:
-                mFragment = new TwentyFourFragment(LinkRSS._24H_PHIM);
+                mFragment =  TwentyFourFragment.newInstance(LinkRSS._24H_PHIM);
                 loadFragment(mFragment);
                 return true;
             case R.id.cong_nghe:
-                mFragment = new TwentyFourFragment(LinkRSS._24H_CONG_NGHE);
+                mFragment =  TwentyFourFragment.newInstance(LinkRSS._24H_CONG_NGHE);
                 loadFragment(mFragment);
                 return true;
             case R.id.suc_khoe:
-                mFragment = new TwentyFourFragment(LinkRSS._24H_SUC_KHOE);
+                mFragment =  TwentyFourFragment.newInstance(LinkRSS._24H_SUC_KHOE);
                 loadFragment(mFragment);
                 return true;
             case R.id.giai_tri:
-                mFragment = new TwentyFourFragment(LinkRSS._24H_GIAI_TRI);
+                mFragment =  TwentyFourFragment.newInstance(LinkRSS._24H_GIAI_TRI);
                 loadFragment(mFragment);
                 return true;
             case R.id.the_thao:
-                mFragment = new TwentyFourFragment(LinkRSS._24H_THE_THAO);
+                mFragment =  TwentyFourFragment.newInstance(LinkRSS._24H_THE_THAO);
                 loadFragment(mFragment);
                 return true;
 

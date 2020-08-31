@@ -34,10 +34,11 @@ public class Utils {
 
     public static String DateToTimeFormat(String oldstringDate) {
         PrettyTime p = new PrettyTime(new Locale(getCountry()));
+        //PrettyTime p = new PrettyTime();
         String isTime = null;
         try {
             // SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
-            SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z",Locale.ENGLISH );
             Date date = sdf.parse(oldstringDate);
             isTime = p.format(date);
         } catch (ParseException e) {
@@ -46,13 +47,30 @@ public class Utils {
 
         return isTime;
     }
-
-    public static String DateFormat(String oldstringDate) {
+    public static String DateFormatTuoiTre(String oldstringDate) {
         String newDate;
+        //SimpleDateFormat dateFormat = new SimpleDateFormat("E, d MMM yyyy", new Locale(getCountry()));
         SimpleDateFormat dateFormat = new SimpleDateFormat("E, d MMM yyyy", new Locale(getCountry()));
         try {
             // Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(oldstringDate); //"2020-08-24T08:57:05Z"
-            Date date = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z").parse(oldstringDate);
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss 'GMT'Z",Locale.ENGLISH);
+            Date date = sdf.parse(oldstringDate);
+            newDate = dateFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            newDate = oldstringDate;
+        }
+
+        return newDate;
+    }
+    public static String DateFormat(String oldstringDate) {
+        String newDate;
+        //SimpleDateFormat dateFormat = new SimpleDateFormat("E, d MMM yyyy", new Locale(getCountry()));
+        SimpleDateFormat dateFormat = new SimpleDateFormat("E, d MMM yyyy", new Locale(getCountry()));
+        try {
+            // Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(oldstringDate); //"2020-08-24T08:57:05Z"
+            SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z",Locale.ENGLISH);
+            Date date = sdf.parse(oldstringDate);
             newDate = dateFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -73,6 +91,7 @@ public class Utils {
         String country = String.valueOf(locale.getLanguage());
         return country.toLowerCase();
     }
+
     public static Boolean isOnline(Context mContext) {
         ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
@@ -81,6 +100,7 @@ public class Utils {
         }
         return false;
     }
+
     public static String getLinkImage(String s) {
         int indexStartUrl = s.indexOf("url=");
         int indexStartSrc = s.indexOf("src=");

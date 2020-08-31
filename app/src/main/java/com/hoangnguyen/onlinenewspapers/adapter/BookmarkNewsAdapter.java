@@ -22,29 +22,29 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.hoangnguyen.onlinenewspapers.R;
 import com.hoangnguyen.onlinenewspapers.commom.Utils;
 import com.hoangnguyen.onlinenewspapers.model.News;
 
 import java.util.List;
 
-public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
-
+public class BookmarkNewsAdapter extends RecyclerView.Adapter<BookmarkNewsAdapter.ViewHolder> {
     private List<News> mListNews;
     private Context mContext;
     private ItemClickListener onItemClickListener;
 
-    public NewsAdapter(List<News> mListNews, Context mContext) {
+
+    public BookmarkNewsAdapter(List<News> mListNews, Context mContext) {
         this.mListNews = mListNews;
         this.mContext = mContext;
     }
 
     public void clear() {
-        if (mListNews.size()!=0){
-            mListNews.clear();
-            notifyDataSetChanged();
-        }
-
+        mListNews.clear();
+        notifyDataSetChanged();
     }
 
 
@@ -54,7 +54,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         //inflate custom layout
-        View newsView = inflater.inflate(R.layout.item_news, parent, false);
+        View newsView = inflater.inflate(R.layout.item_news_bookmark, parent, false);
         //return a new holder instance
         ViewHolder viewHolder = new ViewHolder(newsView, onItemClickListener);
         return viewHolder;
@@ -62,7 +62,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        News news = mListNews.get(position);
+        final News news = mListNews.get(position);
 
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(Utils.getRandomDrawbleColor());
@@ -91,12 +91,38 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
         holder.mTvTitle.setText(news.getmTitle());
         holder.mTvDescription.setText(news.getmDescription());
         holder.mTvPublishDate.setText(news.getmPubDate());
-        //holder.mTvPublishDate.setText(Utils.DateFormat(news.getmPubDate()));
         holder.mTvAuthor.setText(news.getmAuthor());
         holder.mTvSource.setText(news.getmSource());
         holder.mTvTime.setText(" \u2022 " + news.getmTime());
-        // holder.mTvTime.setText(" \u2022 " + Utils.DateToTimeFormat(news.getmPubDate()));
+        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+        final DatabaseReference mReferenceNews = mDatabase.getReference("news");
+        holder.mImageDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mReferenceNews.child(news.getmKey()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(holder.itemView.getContext(), "Đã xóa khỏi Bookmark", Toast.LENGTH_SHORT).show();
+                        notifyDataSetChanged();
+                    }
+                });
+
+            }
+        });
+        holder.mTvDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mReferenceNews.child(news.getmKey()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(holder.itemView.getContext(), "Đã xóa khỏi Bookmark", Toast.LENGTH_SHORT).show();
+                        notifyDataSetChanged();
+                    }
+                });
+            }
+        });
     }
+
 
     @Override
     public int getItemCount() {
@@ -113,8 +139,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-        private ImageView mImage;
-        private TextView mTvTitle, mTvDescription, mTvAuthor, mTvSource, mTvPublishDate, mTvTime;
+        private ImageView mImage, mImageDelete;
+        private TextView mTvTitle, mTvDescription, mTvAuthor, mTvSource, mTvPublishDate, mTvTime, mTvDelete;
         private ProgressBar mProgressBar;
         private ItemClickListener itemClickListener;
 
@@ -129,6 +155,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             mTvPublishDate = itemView.findViewById(R.id.tv_publish_date);
             mTvTime = itemView.findViewById(R.id.tv_time);
             mProgressBar = itemView.findViewById(R.id.progress_load_photo);
+            mImageDelete = itemView.findViewById(R.id.image_delete);
+            mTvDelete = itemView.findViewById(R.id.tv_delete);
             itemView.setOnClickListener(this);
             this.itemClickListener = itemClickListener;
 

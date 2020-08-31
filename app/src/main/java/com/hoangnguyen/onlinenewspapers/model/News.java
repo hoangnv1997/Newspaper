@@ -9,8 +9,21 @@ public class News {
     private String mAuthor;
     private String mSource;
     private String mTime;
+    private String mKey;
 
     public News() {
+    }
+
+    public News(String mTitle, String mDescription, String mUrl, String mUrlToImage, String mPubDate, String mAuthor, String mSource , String mKey, String mTime) {
+        this.mTitle = mTitle;
+        this.mDescription = mDescription;
+        this.mUrl = mUrl;
+        this.mUrlToImage = mUrlToImage;
+        this.mPubDate = mPubDate;
+        this.mAuthor = mAuthor;
+        this.mSource = mSource;
+        this.mKey = mKey;
+        this.mTime = mTime;
     }
 
     public News(String mTitle, String mDescription, String mUrl, String mUrlToImage, String mPubDate, String mAuthor, String mSource) {
@@ -21,6 +34,14 @@ public class News {
         this.mPubDate = mPubDate;
         this.mAuthor = mAuthor;
         this.mSource = mSource;
+    }
+
+    public String getmKey() {
+        return mKey;
+    }
+
+    public void setmKey(String mKey) {
+        this.mKey = mKey;
     }
 
     public String getmAuthor() {

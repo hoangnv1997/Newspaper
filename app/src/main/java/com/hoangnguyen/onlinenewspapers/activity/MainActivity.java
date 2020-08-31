@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         mLnVietnamnet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFragment = new VietnamnetFragment(LinkRSS.VIETNAMNET_MOI_NHAT);
+                mFragment = VietnamnetFragment.newInstance(LinkRSS.VIETNAMNET_MOI_NHAT);
                 loadFragment(mFragment);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 getSupportActionBar().setTitle("vietnamnet.vn");
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         mLnVnExpress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFragment = new VnExpressFragment(LinkRSS.VNEXPRESS_MOI_NHAT);
+                mFragment = VnExpressFragment.newInstance(LinkRSS.VNEXPRESS_MOI_NHAT);
                 loadFragment(mFragment);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 getSupportActionBar().setTitle("vnexpress.net");
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         mLnTuoitre.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFragment = new TuoitreFragment(LinkRSS.TUOITRE_TRANG_CHU);
+                mFragment = TuoitreFragment.newInstance(LinkRSS.TUOITRE_TRANG_CHU);
                 loadFragment(mFragment);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 getSupportActionBar().setTitle("tuoitre.vn");
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         mLn24h.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFragment = new TwentyFourFragment(LinkRSS._24H_TRANG_CHU);
+                mFragment = TwentyFourFragment.newInstance(LinkRSS._24H_TRANG_CHU);
                 loadFragment(mFragment);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 getSupportActionBar().setTitle("24h.com.vn");
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         mLnDanviet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFragment = new DanvietFragment(LinkRSS.DANVIET_TRANG_CHU);
+                mFragment = DanvietFragment.newInstance(LinkRSS.DANVIET_TRANG_CHU);
                 loadFragment(mFragment);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 getSupportActionBar().setTitle("danviet.vn");
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         mLnBookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFragment = new BookmarkFragment("news");
+                mFragment = BookmarkFragment.newInstance("news");
                 loadFragment(mFragment);
                 mDrawerLayout.closeDrawer(GravityCompat.START);
                 getSupportActionBar().setTitle("Tin đã lưu");
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         mLn24h = findViewById(R.id.twentyfour);
         mLnTuoitre = findViewById(R.id.tuoitre);
         mLnBookmark = findViewById(R.id.bookmark);
-        mFragment = new VietnamnetFragment(LinkRSS.VIETNAMNET_MOI_NHAT);
+        mFragment = VietnamnetFragment.newInstance(LinkRSS.VIETNAMNET_MOI_NHAT);
         loadFragment(mFragment);
         mDrawerLayout.closeDrawer(GravityCompat.START);
         getSupportActionBar().setTitle("vietnamnet.vn");
