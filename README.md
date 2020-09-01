@@ -26,5 +26,5 @@ Screenshot
 
 <img src="https://github.com/hoangnv1997/Newspaper/blob/master/ScreenShotApp_0.PNG"><img src="https://github.com/hoangnv1997/Newspaper/blob/master/ScreenShotApp_1.PNG">
 <img src="https://github.com/hoangnv1997/Newspaper/blob/master/ScreenShotApp_2.PNG"><img src="https://github.com/hoangnv1997/Newspaper/blob/master/ScreenShotApp_3.PNG">
-<img src="https://github.com/hoangnv1997/Newspaper/blob/master/ScreenShotApp_4.PNG"><img src="https://github.com/hoangnv1997/Newspaper/blob/master/ScreenShotApp_5.PNG">
+<img src="https://github.com/hoangnv1997/Newspaper/blob/master/ScreenShotApp-4.PNG"><img src="https://github.com/hoangnv1997/Newspaper/blob/master/ScreenShotApp-5.PNG">
 <img src="https://github.com/hoangnv1997/Newspaper/blob/master/ScreenShotApp_6.PNG"><img src="https://github.com/hoangnv1997/Newspaper/blob/master/ScreenShotApp_7.PNG">
