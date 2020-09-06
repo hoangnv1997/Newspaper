@@ -1,6 +1,7 @@
 package com.hoangnguyen.onlinenewspapers.fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -42,9 +43,7 @@ import java.util.List;
 
 public class TuoitreFragment extends Fragment {
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
-    private TextView mTvTopHeadLine;
     private Fragment mFragment;
     private NewsAdapter mNewsAdapter;
     private List<News> mList;
@@ -73,7 +72,7 @@ public class TuoitreFragment extends Fragment {
         //mProgressBar = view.findViewById(R.id.progressbar);
         mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
 
-        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
 
         mRecyclerView = view.findViewById(R.id.rv_news);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -185,7 +184,6 @@ public class TuoitreFragment extends Fragment {
         if (Utils.isOnline(getContext()) == false) {
             mRecyclerView.setVisibility(View.GONE);
             mErrorLayout.setVisibility(View.VISIBLE);
-            mProgressBar.setVisibility(View.GONE);
             mSwipeRefreshLayout.setVisibility(View.GONE);
         } else {
             if (mLoadDataAsyncTask != null) {

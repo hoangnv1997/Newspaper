@@ -93,7 +93,7 @@ public class BookmarkNewsAdapter extends RecyclerView.Adapter<BookmarkNewsAdapte
         holder.mTvPublishDate.setText(news.getmPubDate());
         holder.mTvAuthor.setText(news.getmAuthor());
         holder.mTvSource.setText(news.getmSource());
-        holder.mTvTime.setText(" \u2022 " + news.getmTime());
+        //holder.mTvTime.setText(" \u2022 " + news.getmTime());
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         final DatabaseReference mReferenceNews = mDatabase.getReference("news");
         holder.mImageDelete.setOnClickListener(new View.OnClickListener() {

@@ -128,37 +128,25 @@
                 android:textColor="@color/colorTextTitle"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tv_time"
-                android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:layout_below="@id/tv_description"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_toRightOf="@id/tv_source"
-                android:drawablePadding="10dp"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:text="Time" />
 
             <ImageView
                 android:id="@+id/image_delete"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_below="@id/tv_description"
+                android:layout_alignTop="@id/tv_source"
                 android:layout_alignRight="@id/layout_date"
-                android:layout_alignTop="@id/tv_time"
                 android:src="@drawable/trash" />
+
             <TextView
                 android:id="@+id/tv_delete"
-                android:text="Xóa tin"
-                android:layout_marginRight="5dp"
-                android:layout_alignTop="@id/tv_time"
-                android:layout_below="@id/tv_description"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_description"
+                android:layout_alignTop="@id/tv_source"
+                android:layout_marginRight="5dp"
                 android:layout_toLeftOf="@id/image_delete"
-                android:layout_height="wrap_content"/>
+                android:text="Xóa tin" />
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>

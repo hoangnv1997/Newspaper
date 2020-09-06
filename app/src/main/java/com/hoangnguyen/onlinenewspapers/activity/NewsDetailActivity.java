@@ -3,11 +3,14 @@ package com.hoangnguyen.onlinenewspapers.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -52,7 +55,7 @@ public class NewsDetailActivity extends AppCompatActivity {
     private WebView mWebView;
     private Boolean mIsAddNews;
     private String mKey;
-    private ProgressBar mProgressBar;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
 
     @Override
@@ -60,8 +63,10 @@ public class NewsDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_detail);
         init();
-        //mWebView.setVisibility(View.INVISIBLE);
+        mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
         getDataFromFragment();
+
     }
 
     private void getDataFromFragment() {
@@ -97,8 +102,9 @@ public class NewsDetailActivity extends AppCompatActivity {
         mWebView.getSettings().setSupportZoom(true);
         mWebView.getSettings().setBuiltInZoomControls(true);
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+        mWebView.loadUrl(url);
         mWebView.setWebViewClient(new WebViewClient() {
-//            @Override
+            //            @Override
 //            public void onPageStarted(WebView view, String url, Bitmap favicon) {
 //                super.onPageStarted(view, url, favicon);
 //                mWebView.setVisibility(View.GONE);
@@ -106,13 +112,11 @@ public class NewsDetailActivity extends AppCompatActivity {
 //                 //Toast.makeText(NewsDetailActivity.this, "onPageStarted", Toast.LENGTH_SHORT).show();
 //            }
 //
-//            @Override
-//            public void onPageFinished(WebView view, String url) {
-//                super.onPageFinished(view, url);
-//                mProgressBar.setVisibility(View.GONE);
-//                mWebView.setVisibility(View.VISIBLE);
-//                // Toast.makeText(NewsDetailActivity.this, "onPageFinished", Toast.LENGTH_SHORT).show();
-//            }
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -120,7 +124,14 @@ public class NewsDetailActivity extends AppCompatActivity {
             }
 
         });
-        mWebView.loadUrl(url);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //mWebView.loadUrl(url);
+                mWebView.reload();
+            }
+        });
+
     }
 
     private void init() {
@@ -128,7 +139,7 @@ public class NewsDetailActivity extends AppCompatActivity {
         mReferenceNews = mDatabase.getReference("news");
         mIsAddNews = false;
         mWebView = findViewById(R.id.webView);
-        mProgressBar = findViewById(R.id.progress_bar);
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh);
         //mImageView = findViewById(R.id.backdrop);
         mTvAppBarTitle = findViewById(R.id.title_on_appbar);
         mTvAppBarSubTitle = findViewById(R.id.subtitile_on_appbar);
@@ -141,6 +152,7 @@ public class NewsDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         //CollapsingToolbarLayout collapsingToolbarLayout = findViewById(R.id.collapsing_toolbar_layout);
         //collapsingToolbarLayout.setTitle("");
@@ -240,4 +252,6 @@ public class NewsDetailActivity extends AppCompatActivity {
 
         return super.onKeyDown(keyCode, event);
     }
+
+
 }

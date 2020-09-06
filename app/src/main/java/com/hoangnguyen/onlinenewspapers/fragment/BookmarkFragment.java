@@ -1,6 +1,7 @@
 package com.hoangnguyen.onlinenewspapers.fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -48,7 +49,6 @@ public class BookmarkFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private BookmarkNewsAdapter mNewsAdapter;
     private View mView;
-    private ProgressBar mProgressBar;
     private LoadDataAsynTask mLoadDataAsynTask;
     private static String mChild;
     private RelativeLayout mErrorLayout;
@@ -81,6 +81,7 @@ public class BookmarkFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mList = new ArrayList<>();
         mSwipeRefreshLayout = mView.findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
         mRecyclerView = mView.findViewById(R.id.rv_news);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(mView.getContext()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -115,7 +116,7 @@ public class BookmarkFragment extends Fragment {
         if (Utils.isOnline(getContext()) == false) {
             mRecyclerView.setVisibility(View.GONE);
             mErrorLayout.setVisibility(View.VISIBLE);
-            mProgressBar.setVisibility(View.GONE);
+//            mProgressBar.setVisibility(View.GONE);
             mSwipeRefreshLayout.setVisibility(View.GONE);
         } else {
             if (mLoadDataAsynTask != null) {

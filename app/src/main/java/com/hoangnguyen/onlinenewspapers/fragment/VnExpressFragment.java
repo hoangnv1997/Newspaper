@@ -1,6 +1,7 @@
 package com.hoangnguyen.onlinenewspapers.fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -42,7 +43,6 @@ import java.util.List;
 
 public class VnExpressFragment extends Fragment {
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private ProgressBar mProgressBar;
     private RecyclerView mRecyclerView;
     private Fragment mFragment;
     private NewsAdapter mNewsAdapter;
@@ -73,6 +73,7 @@ public class VnExpressFragment extends Fragment {
         mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         mErrorLayout = view.findViewById(R.id.errorLayout);
         mButtonRetry = view.findViewById(R.id.btn_retry);
+        mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -81,7 +82,7 @@ public class VnExpressFragment extends Fragment {
                 loadData();
             }
         });
-        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        //mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
 
         mRecyclerView = view.findViewById(R.id.rv_news);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -184,7 +185,7 @@ public class VnExpressFragment extends Fragment {
         if (Utils.isOnline(getContext()) == false) {
             mRecyclerView.setVisibility(View.GONE);
             mErrorLayout.setVisibility(View.VISIBLE);
-            mProgressBar.setVisibility(View.GONE);
+           // mProgressBar.setVisibility(View.GONE);
             mSwipeRefreshLayout.setVisibility(View.GONE);
         } else {
             if (mLoadDataAsyncTask != null) {

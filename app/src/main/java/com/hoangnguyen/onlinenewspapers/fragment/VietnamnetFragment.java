@@ -1,6 +1,7 @@
 package com.hoangnguyen.onlinenewspapers.fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,9 +44,7 @@ import java.util.List;
 
 public class VietnamnetFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private TextView mTopHeadLine;
     private RecyclerView mRecyclerView;
-    private ProgressBar mProgressBar;
     private List<News> mListNews;
     private NewsAdapter mNewsAdapter;
     private static String mPath;
@@ -82,8 +81,8 @@ public class VietnamnetFragment extends Fragment implements SwipeRefreshLayout.O
 
         mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-
+        //mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE);
         mErrorLayout = view.findViewById(R.id.errorLayout);
         mButtonRetry = view.findViewById(R.id.btn_retry);
 
@@ -107,7 +106,7 @@ public class VietnamnetFragment extends Fragment implements SwipeRefreshLayout.O
         if (Utils.isOnline(getContext()) == false) {
             mRecyclerView.setVisibility(View.GONE);
             mErrorLayout.setVisibility(View.VISIBLE);
-            mProgressBar.setVisibility(View.GONE);
+//            mProgressBar.setVisibility(View.GONE);
             mSwipeRefreshLayout.setVisibility(View.GONE);
         } else {
             if (mLoadDataAsyncTask != null) {

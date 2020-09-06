@@ -2,6 +2,7 @@ package com.hoangnguyen.onlinenewspapers.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -9,6 +10,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -110,6 +112,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//        builder.setIcon(R.drawable.ic_notification);
+//        builder.setTitle("Thông báo");
+//        builder.setMessage("Bạn có muốn thoát không?");
+//        builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                finish();
+//            }
+//        });
+//        builder.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//
+//            }
+//        });
+//        builder.show();
+//    }
 
     public void init() {
         mDrawerLayout = findViewById(R.id.drawer_layout);
